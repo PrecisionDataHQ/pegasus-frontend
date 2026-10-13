@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QGuiApplication app(argc, argv);
-    app.setApplicationName(QStringLiteral("pegasus-frontend"));
+    app.setApplicationName(QStringLiteral("joyorbit"));
     app.setApplicationVersion(QStringLiteral(GIT_REVISION));
-    app.setOrganizationName(QStringLiteral("pegasus-frontend"));
-    app.setOrganizationDomain(QStringLiteral("pegasus-frontend.org"));
+    app.setOrganizationName(QStringLiteral("joyorbit"));
+    app.setOrganizationDomain(QStringLiteral("precisiondata.io"));
     app.setWindowIcon(QIcon(QStringLiteral(":/icon.png")));
 
     if (!request_runtime_permissions())
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 bool request_runtime_permissions()
 {
 #ifdef Q_OS_ANDROID
-    return android::has_external_storage_access();
+    return true; // JoyOrbit loads only its app-private bundled catalogue.
 #endif
 
     return true;

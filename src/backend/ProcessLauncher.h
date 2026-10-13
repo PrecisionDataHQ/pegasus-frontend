@@ -20,6 +20,7 @@
 #include <QObject>
 #include <QProcess>
 
+class QTimer;
 namespace model { class GameFile; }
 
 
@@ -55,6 +56,9 @@ private slots:
 
 private:
     QProcess* m_process;
+#ifdef Q_OS_ANDROID
+    QTimer* m_android_return_timer;
+#endif
 
     void runProcess(const QString&, const QStringList&, const QString&);
 

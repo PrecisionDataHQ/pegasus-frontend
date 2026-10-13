@@ -95,3 +95,7 @@ pegasus_print_box(
     TITLE "Backend Settings"
     CONTENT "${BOX_LINES}"
 )
+
+if(APPLE)
+ target_link_libraries(pegasus-backend PUBLIC "-framework Carbon")
+endif()

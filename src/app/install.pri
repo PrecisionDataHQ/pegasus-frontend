@@ -92,7 +92,7 @@ android {
         platform/android/res/values/libs.xml \
 
     ANDROID_MIN_SDK_VERSION = 21
-    ANDROID_TARGET_SDK_VERSION = 30
+    ANDROID_TARGET_SDK_VERSION = 35
 
     ANDROID_CFGDIR_IN = $$PWD/platform/android
     ANDROID_CFGDIR_OUT = $$OUT_PWD/android
@@ -102,21 +102,8 @@ android {
     ANDROID_MANIFEST_OUT = $${ANDROID_CFGDIR_OUT}/AndroidManifest.xml
 
     # TODO: make this cross-platform
-    QMAKE_POST_LINK += \
-        $${QMAKE_COPY_DIR} $$shell_path($$ANDROID_CFGDIR_IN) $$shell_path($$ANDROID_CFGDIR_OUT) && \
-        sed -i s/@GIT_REVISION@/$${GIT_REVISION}/ $$shell_path($$ANDROID_MANIFEST_OUT) && \
-        sed -i s/@GIT_COMMIT_CNT@/$${GIT_COMMIT_CNT}/ $$shell_path($$ANDROID_MANIFEST_OUT)
-
     ANDROID_PACKAGE_SOURCE_DIR = $${ANDROID_CFGDIR_OUT}
-    ANDROID_EXTRA_LIBS += \
-        /opt/openssl-111t_android-arm/lib/libcrypto.so \
-        /opt/openssl-111t_android-arm/lib/libssl.so \
-        /opt/openssl-111t_android-arm64/lib/libcrypto.so \
-        /opt/openssl-111t_android-arm64/lib/libssl.so \
-        /opt/openssl-111t_android-x86/lib/libcrypto.so \
-        /opt/openssl-111t_android-x86/lib/libssl.so \
-        /opt/openssl-111t_android-x86_64/lib/libcrypto.so \
-        /opt/openssl-111t_android-x86_64/lib/libssl.so
+
 }
 
 

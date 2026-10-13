@@ -25,7 +25,7 @@ Window {
     visible: true
     width: 1280
     height: 720
-    title: "Pegasus"
+    title: "JoyOrbit"
     color: "#000"
 
     visibility: Internal.settings.fullscreen
@@ -78,6 +78,7 @@ Window {
 
         Loader {
             id: theme
+            readonly property int joyorbitGamepadCount: Internal.gamepad.devices.count
             anchors.fill: parent
 
             focus: true

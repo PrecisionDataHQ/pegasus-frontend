@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <manifest
-    package="org.pegasus_frontend.android"
+    package="io.precisiondata.joyorbit"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:versionName="@GIT_REVISION@"
     android:versionCode="@GIT_COMMIT_CNT@"
@@ -8,24 +8,23 @@
     <application
         android:hardwareAccelerated="true"
         android:name="org.qtproject.qt5.android.bindings.QtApplication"
-        android:label="Pegasus"
+        android:label="JoyOrbit"
         android:icon="@mipmap/icon"
         android:banner="@mipmap/banner"
         android:extractNativeLibs="true"
         android:requestLegacyExternalStorage="true">
         <activity
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
-            android:name=".MainActivity"
-            android:label="Pegasus"
+            android:name="org.pegasus_frontend.android.MainActivity" android:exported="true"
+            android:label="JoyOrbit"
             android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
-            android.theme="@style/PegasusMain">
+            android:theme="@style/PegasusMain">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-                <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
@@ -70,13 +69,15 @@
 
         <provider
             android:name="org.pegasus_frontend.android.LaunchFileProvider"
-            android:authorities="org.pegasus_frontend.android.files"
+            android:authorities="io.precisiondata.joyorbit.files"
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/fileprovider_paths" />
         </provider>
     </application>
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <queries><package android:name="io.precisiondata.joyorbit.engine"/><package android:name="org.supertuxkart.stk"/></queries>
     <supports-screens
         android:smallScreens="true"
         android:normalScreens="true"
@@ -84,11 +85,6 @@
         android:xlargeScreens="true"
         android:anyDensity="true" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
     <uses-feature android:name="android.hardware.gamepad" android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false" />

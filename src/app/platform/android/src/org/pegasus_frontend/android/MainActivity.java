@@ -50,10 +50,64 @@ import java.util.List;
 
 
 public class MainActivity extends org.qtproject.qt5.android.bindings.QtActivity {
+    private static volatile boolean joyGamePending;
+    private static volatile boolean joyGamePaused;
+    private static volatile boolean joyGameReturned;
+    @Override
+    public void onPause() {
+        if (joyGamePending) joyGamePaused = true;
+        super.onPause();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (joyGamePending && joyGamePaused) {
+            joyGamePending = false;
+            joyGameReturned = true;
+        }
+    }
+    public static boolean consumeJoyOrbitGameReturn() {
+        if (!joyGameReturned) return false;
+        joyGameReturned = false;
+        return true;
+    }
     private static Activity m_self;
     private static PackageManager m_pm;
     private static int m_icon_density;
 
+
+    @Override
+    public void onCreate(android.os.Bundle state) {
+        prepareJoyOrbitLibrary();
+        super.onCreate(state);
+    }
+
+    private void prepareJoyOrbitLibrary() {
+        try {
+            java.io.File library = new java.io.File(getFilesDir(), "library");
+            library.mkdirs();
+            String[] files = getAssets().list("joyorbit/library");
+            for (String name : files) {
+                try (java.io.InputStream input = getAssets().open("joyorbit/library/" + name);
+                     java.io.FileOutputStream output = new java.io.FileOutputStream(new java.io.File(library, name))) {
+                    byte[] buffer = new byte[8192];
+                    int count;
+                    while ((count = input.read(buffer)) != -1) output.write(buffer, 0, count);
+                }
+            }
+            try (java.io.FileOutputStream output = new java.io.FileOutputStream(new java.io.File(getFilesDir(), "game_dirs.txt"))) {
+                output.write((library.getAbsolutePath()+"\n").getBytes("UTF-8"));
+            }
+            java.io.File settings = new java.io.File(getFilesDir(), "settings.txt");
+            if (!settings.exists()) {
+                try (java.io.FileOutputStream output = new java.io.FileOutputStream(settings)) {
+                    output.write("providers.androidapps.enabled: false\n".getBytes("UTF-8"));
+                }
+            }
+        } catch (java.io.IOException error) {
+            android.util.Log.e("JoyOrbit", "Library setup failed", error);
+        }
+    }
 
     @Override
     protected void onStart() {
@@ -246,9 +300,13 @@ public class MainActivity extends org.qtproject.qt5.android.bindings.QtActivity 
             Intent intent = IntentHelper.parseIntentCommand(args);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            joyGameReturned = false;
+            joyGamePaused = false;
+            joyGamePending = true;
             m_self.startActivity(intent);
         }
         catch (Exception e) {
+            joyGamePending = false;
             return e.toString() + ": " + e.getMessage();
         }
 
@@ -258,7 +316,7 @@ public class MainActivity extends org.qtproject.qt5.android.bindings.QtActivity 
     public static String toContentUri(String path) {
         final Uri uri = FileProvider.getUriForFile(
             m_self,
-            "org.pegasus_frontend.android.files",
+            "io.precisiondata.joyorbit.files",
             new File(path));
         return uri.toString();
     }

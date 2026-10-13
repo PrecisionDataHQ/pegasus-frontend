@@ -30,6 +30,7 @@
 #endif
 
 #include <QDir>
+#include <QTimer>
 #include <QUrl>
 #include <QRegularExpression>
 
@@ -154,7 +155,18 @@ QString abs_workdir(const QString& workdir, const QString& base_dir, const QStri
 ProcessLauncher::ProcessLauncher(QObject* parent)
     : QObject(parent)
     , m_process(nullptr)
-{}
+{
+#ifdef Q_OS_ANDROID
+    m_android_return_timer = new QTimer(this);
+    m_android_return_timer->setInterval(200);
+    connect(m_android_return_timer, &QTimer::timeout, this, [this]() {
+        if (!android::consume_game_return()) return;
+        m_android_return_timer->stop();
+        afterRun();
+        emit processFinished();
+    });
+#endif
+}
 
 void ProcessLauncher::onLaunchRequested(const model::GameFile* q_gamefile)
 {
@@ -249,7 +261,7 @@ void ProcessLauncher::runProcess(const QString& command, const QStringList& args
     const QString result = android::run_am_call(args);
     if (result.isEmpty()) {
         emit processLaunchOk();
-        Log::info(LOGMSG("Activity finished"));
+        Log::info(LOGMSG("Activity started; waiting for library return"));
     }
     else {
         const QString message = pretty_android_exception(result).arg(result);
@@ -266,8 +278,10 @@ void ProcessLauncher::onTeardownComplete()
 #ifndef Q_OS_ANDROID
     Q_ASSERT(m_process);
     m_process->waitForFinished(-1);
-#endif
     emit processFinished();
+#else
+    m_android_return_timer->start();
+#endif
 }
 
 void ProcessLauncher::onProcessStarted()

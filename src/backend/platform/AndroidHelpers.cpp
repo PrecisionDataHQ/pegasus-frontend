@@ -137,6 +137,12 @@ bool has_external_storage_access()
     return true;
 }
 
+bool consume_game_return()
+{
+    return QAndroidJniObject::callStaticMethod<jboolean>(jni_classname(),
+        "consumeJoyOrbitGameReturn", "()Z");
+}
+
 QString run_am_call(const QStringList& args)
 {
     QAndroidJniEnvironment jni_env;
