@@ -60,11 +60,15 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QGuiApplication app(argc, argv);
+#ifdef Q_OS_ANDROID
+    // JoyOrbit keeps its Android event loop while the game owns the screen.
+    app.setQuitOnLastWindowClosed(false);
+#endif
     app.setApplicationName(QStringLiteral("joyorbit"));
     app.setApplicationVersion(QStringLiteral(GIT_REVISION));
     app.setOrganizationName(QStringLiteral("joyorbit"));
     app.setOrganizationDomain(QStringLiteral("precisiondata.io"));
-    app.setWindowIcon(QIcon(QStringLiteral(":/icon.png")));
+    app.setWindowIcon(QIcon(QStringLiteral(":/themes/joyorbit/assets/joyorbit.svg")));
 
     if (!request_runtime_permissions())
         return 1;
